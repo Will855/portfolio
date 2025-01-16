@@ -1,0 +1,21 @@
+@media (max-width: 460px) {
+    .nav-item {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+}
+
+@media (min-width: 461px) {
+    nav {
+        @apply fixed top-4 left-1/2 transform -translate-x-1/2 w-auto max-w-2xl bg-transparent backdrop-filter-none;
+    }
+    nav ul {
+        @apply flex-row justify-between px-4 py-2;
+    }
+    .nav-item {
+        @apply mb-0 mr-4;
+    }
+    button {
+        @apply hidden;
+    }
+}
