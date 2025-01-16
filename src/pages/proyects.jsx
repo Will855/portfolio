@@ -1,6 +1,6 @@
 import React from "react"
 import Grid from "../components/cards/components_Grid.tsx"
-import Footer from "../components/footer/footer.js"
+import Footer from "../components/footer/footer.jsx"
 
 export const Proyects = () => {
     return <>

@@ -5,26 +5,28 @@ import axios from "axios"; // Importar Axios
 import PageComponent from "./page"; // Importar el componente PageComponent
 
 const CardDetails: React.FC = () => {
-  // Obtener el ID de la tarjeta desde la URL
+    // Obtener el ID de la tarjeta desde la URL
     const { id } = useParams<{ id: string }>();
     
-    // Estado para almacenar el contenido y el GIF
+    // Estado para almacenar el contenido, el GIF y el título
     const [content, setContent] = useState<string>("");
     const [gifSrc, setGifSrc] = useState<string>("");
+    const [title, setTitle] = useState<string>("");
 
     // useEffect para cargar los datos desde el servidor
     useEffect(() => {
         const fetchCardDetails = async () => {
-        try {
-            // Realizar una llamada a la API para obtener los detalles de la tarjeta
-            const response = await axios.get(`/api/cards/${id}`); // Suponiendo que tienes una API que devuelve los detalles de la tarjeta
-            
-            // Actualizar el estado con los datos recibidos
-            setContent(response.data.content); // Asignar el contenido recibido
-            setGifSrc(response.data.gifSrc); // Asignar la URL del GIF recibido
-        } catch (error) {
-            console.error("Error al cargar los detalles de la tarjeta:", error);
-        }
+            try {
+                // Realizar una llamada a la API para obtener los detalles de la tarjeta
+                const response = await axios.get(`/server/card/${id}`); // Suponiendo que tienes una API que devuelve los detalles de la tarjeta
+                
+                // Actualizar el estado con los datos recibidos
+                setTitle(response.data.title); // Asignar el título recibido
+                setContent(response.data.content); // Asignar el contenido recibido
+                setGifSrc(response.data.gifSrc); // Asignar la URL del GIF recibido
+            } catch (error) {
+                console.error("Error al cargar los detalles de la tarjeta:", error);
+            }
         };
 
         fetchCardDetails(); // Llamar a la función para cargar los detalles de la tarjeta
@@ -32,7 +34,7 @@ const CardDetails: React.FC = () => {
 
     // Renderizar el componente PageComponent con los props dinámicos
     return (
-        <PageComponent content={content} gifSrc={gifSrc} />
+        <PageComponent title={title} content={content} gifSrc={gifSrc} />
     );
 };
 

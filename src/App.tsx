@@ -5,7 +5,7 @@ import { Home } from './pages/home.jsx';
 import  Information  from './pages/information.tsx'
 import { Proyects } from './pages/proyects.jsx';
 import { Contact } from './pages/contact.jsx';
-import BackgroundStars from './components/backgrounds/bgStars.js';
+import BackgroundStars from './components/backgrounds/bgStars.jsx';
 import BackgroundNodes from './components/backgrounds/bgNodes.tsx';
 import ResponsiveMenu from './components/navbar/menuResponsive.tsx';
 import CardDetails from './components/infoPage/carDetails.tsx';

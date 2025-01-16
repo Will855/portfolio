@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
@@ -59,7 +59,7 @@ const ContactForm = () => {
 
     try {
       // Enviar los datos al servidor usando Axios
-      const response = await axios.post('http://localhost/mi-proyecto/server/form.php', formData);
+      const response = await axios.post('http://localhost/server/form.php', formData);
       setResponseMessage(response.data.message); // Manejar la respuesta del servidor
     } catch (error) {
       console.error('Error al enviar los datos:', error);
@@ -76,7 +76,7 @@ const ContactForm = () => {
       >
         <h2 className="text-3xl font-bold mb-6 text-[#f0f8ff] text-center">Contact Us</h2>
         <div className="space-y-4">
-          <Input label="Name" name="name" type="text" placeholder="Your name" onChange={handleChange} />
+          <Input label="Name" name="name" type="text" placeholder="Your name" onChange={handleChange}/>
           <Input label="Email" name="email" type="email" placeholder="your@email.com" onChange={handleChange} />
           <Input label="Phone" name="phone" type="tel" placeholder="Your phone number" onChange={handleChange} />
           <div className="relative">
