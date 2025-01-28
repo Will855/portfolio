@@ -46,7 +46,7 @@ const Grid: React.FC = () => {
       {/* Itera sobre los datos de las tarjetas y renderiza cada una */}
       {cardData.map((card) => (
         <Link to={`/page/${card.id}`} key={card.id}>
-          {/* Cada tarjeta está envuelta en un Link que redirige a una ruta dinámica */`${console.log(card)}`}
+          {/* Cada tarjeta está envuelta en un Link que redirige a una ruta dinámica */}
           
           <Card {...card} />
         </Link>
