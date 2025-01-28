@@ -1,7 +1,6 @@
 import React, { useRef, useEffect } from "react";
 import gsap from "gsap";
 import { CardProps } from "./types";
-
 const Card: React.FC<CardProps> = ({ img, title, description, buttonText }) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);

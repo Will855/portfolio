@@ -13,7 +13,7 @@ function ResponsiveMenu() {
     if (isOpen) {
     gsap.to(sidebarRef.current, {
         x: '0%',
-        duration: 0.5,
+        duration: 0.1,
         ease: 'power2.out'
     });
     gsap.fromTo(
@@ -24,7 +24,7 @@ function ResponsiveMenu() {
     } else {
         gsap.to(sidebarRef.current, {
             x: '-100%',
-            duration: 0.5,
+            duration: 0.2,
             ease: 'power2.in'
         });
     }

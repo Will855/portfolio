@@ -15,10 +15,10 @@ function App() {
     <Router>
         <NavMenu />
         <BackgroundNodes/>
-        <BackgroundStars/> //Responsive
-        <ResponsiveMenu/> //Responsive
+        <BackgroundStars/> 
+        <ResponsiveMenu/> 
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Home/>} />
           <Route path="/inicio" element={<Home />} />
           <Route path="/informacion" element={<Information/>} />
           <Route path="/proyectos" element={<Proyects />} />

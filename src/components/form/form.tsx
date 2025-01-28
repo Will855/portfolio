@@ -20,16 +20,6 @@ const ContactForm = () => {
     timelineRef.current = gsap.timeline({ repeat: -1, yoyo: true });
 
     timelineRef.current
-      .to('.star', {
-        opacity: 0.5,
-        stagger: 0.1,
-        duration: 0.5,
-      })
-      .to('.planet', {
-        rotation: 360,
-        duration: 20,
-        ease: 'none',
-      }, 0)
       .to(formRef.current, {
         boxShadow: '0 0 20px rgba(240, 248, 255, 0.5)',
         duration: 2,
@@ -68,7 +58,7 @@ const ContactForm = () => {
   };
 
   return (
-    <div className="min-h-screen bg-transparent flex items-center justify-center p-4 overflow-hidden">
+    <div className="min-h-screen bg-transparent flex items-center justify-center p-4 overflow-hidden mt-12">
       <form
         ref={formRef}
         onSubmit={handleSubmit} // Agregar el manejador de envío
