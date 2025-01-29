@@ -6,74 +6,101 @@ import IonIcon from '@reacticons/ionicons';
 function ResponsiveMenu() {
     const [isOpen, setIsOpen] = useState(false);
     const sidebarRef = useRef(null);
-
+    const animationRef = useRef<gsap.core.Timeline | null>(null);
     const navItems = ['Inicio', 'Informacion', 'Proyectos', 'Contacto'];
 
+    // Optimización para móviles
     useEffect(() => {
-    if (isOpen) {
-    gsap.to(sidebarRef.current, {
-        x: '0%',
-        duration: 0.1,
-        ease: 'power2.out'
-    });
-    gsap.fromTo(
-        '.nav-item',
-        { y: 50, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.5, stagger: 0.1, ease: 'power2.out' }
-    );
-    } else {
-        gsap.to(sidebarRef.current, {
-            x: '-100%',
-            duration: 0.2,
-            ease: 'power2.in'
+        gsap.set(sidebarRef.current, { x: '-100%' });
+        gsap.set('.nav-item', { opacity: 0, y: 20 });
+
+        return () => {
+            animationRef.current?.kill();
+        };
+    }, []);
+
+    useEffect(() => {
+        animationRef.current?.kill();
+        animationRef.current = gsap.timeline({
+            defaults: { ease: 'power3.inOut', duration: 0.3 },
+            onComplete: () => !isOpen && gsap.set(sidebarRef.current, { x: '-100%' })
         });
-    }
+
+        if (isOpen) {
+            animationRef.current
+                .to(sidebarRef.current, {
+                    x: '0%',
+                    backdropFilter: 'blur(12px)',
+                    force3D: true
+                })
+                .to('.nav-item', {
+                    y: 0,
+                    opacity: 1,
+                    stagger: 0.08,
+                    duration: 0.25,
+                    ease: 'back.out(1.2)',
+                    immediateRender: false
+                }, 0.2);
+        } else {
+            animationRef.current
+                .to('.nav-item', {
+                    y: 20,
+                    opacity: 0,
+                    stagger: -0.05,
+                    duration: 0.2
+                })
+                .to(sidebarRef.current, {
+                    x: '-100%',
+                    backdropFilter: 'blur(0px)',
+                    force3D: true
+                }, 0);
+        }
     }, [isOpen]);
 
     return (
-    <>
-        <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="fixed top-4 right-4 z-50 p-4 bg-white rounded-full shadow-md sm:hidden pb-2"
-        aria-label="Toggle menu"
-        >
-        {isOpen ? (
-            <IonIcon name="grid-outline" className="text-xl text-gray-800"></IonIcon>
-        ) : (
-            <IonIcon name="grid-outline" className="text-xl text-gray-800"></IonIcon>
-        )}
-        </button>
-        <nav
-            ref={sidebarRef}
-            className={`
-            fixed top-0 left-0 h-full w-64 z-40
-            bg-white/30 backdrop-blur-md
-            transform -translate-x-full transition-transform duration-500
-            md:relative md:translate-x-0 md:bg-transparent md:backdrop-blur-none sm:hidden
-            ${isOpen ? 'translate-x-0' : '-translate-x-full'}
-            `}
-        >
-            <ul className="flex flex-col h-full justify-center items-start p-8 md:flex-row md:items-center md:p-0">
-                {navItems.map((item) => (
-                    <li key={item} className="nav-item mb-6 md:mb-0 md:mr-6">
-                    <NavLink
-                        to={`/${item.toLowerCase()}`}
-                        className={({ isActive }) => `
-                            px-4 py-2 rounded-full
-                            text-lg font-medium
-                            transition-colors duration-200
-                            hover:bg-gray-300/50
-                            ${isActive ? 'bg-gray-300/50' : ''}
-                        `}
-                        onClick={() => setIsOpen(false)}
+        <>
+            <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="fixed top-4 right-4 z-50 p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-lg sm:hidden"
+                aria-label="Toggle menu"
+                style={{ willChange: 'transform' }}
+            >
+                <IonIcon
+                    name={isOpen ? "close-outline" : "menu-outline"}
+                    className="text-2xl text-gray-800 pt-1 px-1"
+                />
+            </button>
+
+            <nav
+                ref={sidebarRef}
+                className="fixed top-0 left-0 h-full w-64 z-40 bg-white/70 backdrop-blur-lg shadow-xl"
+                style={{ willChange: 'transform, backdrop-filter' }}
+            >
+                <ul className="flex flex-col h-full justify-center items-start p-6 space-y-4">
+                    {navItems.map((item) => (
+                        <li
+                            key={item}
+                            className="nav-item"
+                            style={{ willChange: 'transform, opacity' }}
                         >
-                        {item}
-                    </NavLink>
-                </li>
-                ))}
-            </ul>
-        </nav>
-    </>
+                            <NavLink
+                                to={`/${item.toLowerCase()}`}
+                                className={({ isActive }) => `
+                                    px-4 py-3 w-full block
+                                    text-lg font-medium rounded-xl
+                                    transition-colors duration-200
+                                    hover:bg-gray-200/50
+                                    ${isActive ? 'bg-gray-200/50' : ''}
+                                `}
+                                onClick={() => setIsOpen(false)}
+                            >
+                                {item}
+                            </NavLink>
+                        </li>
+                    ))}
+                </ul>
+            </nav>
+        </>
     );
 }
 

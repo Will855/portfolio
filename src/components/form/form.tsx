@@ -47,55 +47,55 @@ const ContactForm = () => {
     e.preventDefault();
 
     try {
-        // Validar los datos del formulario
-        if (!formData.name.trim() || !formData.email.trim() || !formData.message.trim()) {
-            setError('Por favor, completa todos los campos del formulario.');
-            return;
-        }
-
-        if (!isValidEmail(formData.email)) {
-            setError('Por favor, ingresa un correo electrónico válido.');
-            return;
-        }
-
-        if (formData.phone && !/^\d{10}$/.test(formData.phone)) {
-          setError('Por favor, ingresa un número de teléfono válido (10 dígitos).');
-          return;
+      // Validar los datos del formulario
+      if (!formData.name.trim() || !formData.email.trim() || !formData.message.trim()) {
+        setError('Por favor, completa todos los campos del formulario.');
+        return;
       }
 
-        // Crear un objeto FormData
-        const formDataToSend = new FormData();
-        formDataToSend.append('name', formData.name);
-        formDataToSend.append('email', formData.email);
-        formDataToSend.append('phone', formData.phone);
-        formDataToSend.append('message', formData.message);
+      if (!isValidEmail(formData.email)) {
+        setError('Por favor, ingresa un correo electrónico válido.');
+        return;
+      }
 
-        // Enviar los datos al servidor usando Axios
-        const response = await axios.post('http://localhost/api/sendForm.php', formDataToSend, {
-            headers: {
-                'Content-Type': 'multipart/form-data', // Asegurarse de que se envíe como formulario
-            },
+      if (formData.phone && !/^\d{11}$/.test(formData.phone)) {
+        setError('Por favor, ingresa un número de teléfono válido (11 dígitos).');
+        return;
+      }
+
+      // Crear un objeto FormData
+      const formDataToSend = new FormData();
+      formDataToSend.append('name', formData.name);
+      formDataToSend.append('email', formData.email);
+      formDataToSend.append('phone', formData.phone);
+      formDataToSend.append('message', formData.message);
+
+      // Enviar los datos al servidor usando Axios
+      const response = await axios.post('http://localhost/api/sendForm.php', formDataToSend, {
+        headers: {
+          'Content-Type': 'multipart/form-data', // Asegurarse de que se envíe como formulario
+        },
+      });
+
+      if (response.data.status === 'success') {
+        setResponseMessage(response.data.message);
+        setError('');
+        setFormData({
+          name: '',
+          email: '',
+          phone: '',
+          message: ''
         });
-
-        if (response.data.status === 'success') {
-            setResponseMessage(response.data.message);
-            setError('');
-            setFormData({
-                name: '',
-                email: '',
-                phone: '',
-                message: ''
-            });
-        } else {
-            setResponseMessage('');
-            setError(response.data.message || 'Error al enviar el mensaje. Por favor, inténtalo de nuevo más tarde.');
-        }
-    } catch (error) {
-        console.error('Error al enviar los datos:', error);
+      } else {
         setResponseMessage('');
-        setError('Error al enviar el mensaje. Por favor, inténtalo de nuevo más tarde.');
+        setError(response.data.message || 'Error al enviar el mensaje. Por favor, inténtalo de nuevo más tarde.');
+      }
+    } catch (error) {
+      console.error('Error al enviar los datos:', error);
+      setResponseMessage('');
+      setError('Error al enviar el mensaje. Por favor, inténtalo de nuevo más tarde.');
     }
-};
+  };
 
   const isValidEmail = (email) => {
     // Expresión regular básica para validar el formato del correo electrónico
@@ -108,15 +108,17 @@ const ContactForm = () => {
       <form
         ref={formRef}
         onSubmit={handleSubmit}
-        className="w-full max-w-lg bg-[#2a2a2a] p-8 rounded-lg shadow-xl relative z-10 backdrop-filter backdrop-blur-sm bg-opacity-80"
+        className="w-full max-w-lg bg-white/5 p-8 rounded-lg shadow-xl relative z-10 backdrop-filter backdrop-blur-sm bg-opacity-80"
       >
-        <h2 className="text-3xl font-bold mb-6 text-[#f0f8ff] text-center">Contact Us</h2>
+        <h2 className="text-4xl md:text-5xl font-bold mb-8 text-center bg-gradient-to-r from-blue-400 to-purple-300 bg-clip-text text-transparent">
+          Contáctame
+        </h2>
         <div className="space-y-4">
-          <Input label="Name" name="name" type="text" placeholder="Your name" onChange={handleChange} />
+          <Input label="Nombre" name="name" type="text" placeholder="Your name" onChange={handleChange} />
           <Input label="Email" name="email" type="email" placeholder="your@email.com" onChange={handleChange} />
-          <Input label="Phone" name="phone" type="tel" placeholder="Your phone number" onChange={handleChange} />
+          <Input label="Telefono" name="phone" type="tel" placeholder="Your phone number" onChange={handleChange} />
           <div className="relative">
-            <label htmlFor="message" className="text-[#f0f8ff] block mb-2">Message</label>
+            <label htmlFor="message" className="text-[#f0f8ff] block mb-2">Mensaje</label>
             <textarea
               id="message"
               name="message"
@@ -130,7 +132,7 @@ const ContactForm = () => {
             type="submit"
             className="w-full bg-gradient-to-r from-[#4a4a4a] to-[#3a3a3a] text-[#f0f8ff] py-2 px-4 rounded-md hover:from-[#5a5a5a] hover:to-[#4a4a4a] transition-all duration-300 ease-in-out"
           >
-            Send Message
+            Enviar
           </button>
         </div>
         {responseMessage && <p className="text-center text-[#f0f8ff] mt-4">{responseMessage}</p>}

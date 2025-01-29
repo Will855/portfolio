@@ -9,11 +9,13 @@ function Information() {
 
   return (<>
     <div className="w-full max-h-screen overflow-scroll flex flex-col sm:justify-between pt-32 gap-20">
-      <div>
-        <InformationContent/>
-      </div>
-      <Footer/>
-    </div> 
+        <div>
+          <InformationContent/>
+        </div>
+        <div>
+        <Footer/>
+        </div>
+      </div> 
     </>
   );
 }

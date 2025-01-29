@@ -1,91 +1,115 @@
-'use client'; // Indica que este componente se ejecuta en el lado del cliente
+'use client';
 
-import React, { useRef, useMemo, useEffect } from 'react'; // Importa React y hooks necesarios
-import { Canvas, useFrame } from '@react-three/fiber'; // Importa Canvas y useFrame de la biblioteca de React Three Fiber
-import * as THREE from 'three'; // Importa la biblioteca Three.js
+import React, { useRef, useMemo, useEffect, useState } from 'react';
+import { Canvas, useFrame } from '@react-three/fiber';
+import * as THREE from 'three';
 
-const NODE_COUNT = 2000; // Define el número total de nodos
-const ACTIVE_CONNECTIONS_PERCENT = 1; // Define el porcentaje de conexiones activas
-const MAX_DISTANCE = 55; // Define la distancia máxima para conectar nodos
+const NODE_COUNT = 1500;
+const MAX_DISTANCE = 100;
+const CONNECTION_PROBABILITY = 0.22; // Incrementado en un 20%
+const ANIMATION_SPEED = 0.6;
 
 function Nodes() {
-  const pointsRef = useRef<THREE.Points>(null!); // Crea una referencia para los puntos
-  const linesRef = useRef<THREE.LineSegments>(null!); // Crea una referencia para las líneas
+  const pointsRef = useRef<THREE.Points>(null!);
+  const linesRef = useRef<THREE.LineSegments>(null!);
+  const [dimensions, setDimensions] = useState({
+    width: typeof window !== 'undefined' ? window.innerWidth : 800,
+    height: typeof window !== 'undefined' ? window.innerHeight : 600
+  });
 
-  // Usa useMemo para calcular posiciones y colores de los nodos
-  const [positions, colors] = useMemo(() => {
-    const positions = new Float32Array(NODE_COUNT * 6); // Crea un array para las posiciones de los nodos
-    const colors = new Float32Array(NODE_COUNT * 4); // Crea un array para los colores de los nodos
-    const color = new THREE.Color(0xFFFFFF); // Define un color blanco
+  const [positions, colors, nodeStates] = useMemo(() => {
+    const positions = new Float32Array(NODE_COUNT * 3);
+    const colors = new Float32Array(NODE_COUNT * 3);
+    const nodeStates = new Array(NODE_COUNT).fill(0).map(() => ({
+      active: Math.random() > 0.5,
+      targetActive: Math.random() > 0.5,
+      phase: Math.random() * Math.PI * 2
+    }));
 
-    // Genera posiciones aleatorias para cada nodo
+    const color = new THREE.Color(0xffffff);
+
     for (let i = 0; i < NODE_COUNT; i++) {
-      const x = (Math.random() - 0.5) * window.innerWidth; // Genera una posición X aleatoria
-      const y = (Math.random() - 0.5) * window.innerHeight; // Genera una posición Y aleatoria
-      const z = (Math.random() - 0.5) * 300; // Genera una posición Z aleatoria
-
-      positions[i * 3] = x; // Asigna la posición X al array
-      positions[i * 3 + 1] = y; // Asigna la posición Y al array
-      positions[i * 3 + 2] = z; // Asigna la posición Z al array
-
-      color.toArray(colors, i * 3); // Convierte el color a un array y lo asigna
+      positions[i * 3] = (Math.random() - 0.5) * dimensions.width;
+      positions[i * 3 + 1] = (Math.random() - 0.5) * dimensions.height;
+      positions[i * 3 + 2] = (Math.random() - 0.5) * 300;
+      color.toArray(colors, i * 3);
     }
 
-    return [positions, colors]; // Devuelve las posiciones y colores
+    return [positions, colors, nodeStates];
+  }, [dimensions]);
+
+  const lineGeometry = useMemo(() => {
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(300000 * 3), 3));
+    geometry.setAttribute('color', new THREE.BufferAttribute(new Float32Array(300000 * 3), 3));
+    return geometry;
   }, []);
 
-  // Crea un array para las posiciones de las líneas
-  const linePositions = useMemo(() => new Float32Array(NODE_COUNT * NODE_COUNT * 3 * 2), []);
-  // Crea un array para los colores de las líneas
-  const lineColors = useMemo(() => new Float32Array(NODE_COUNT * NODE_COUNT * 3 * 2), []);
+  useEffect(() => {
+    const handleResize = () => {
+      setDimensions({
+        width: window.innerWidth,
+        height: window.innerHeight
+      });
+    };
 
-  // Usa useFrame para actualizar las líneas en cada frame
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   useFrame((state) => {
-    if (!pointsRef.current || !linesRef.current) return; // Verifica que las referencias existan
+    if (!pointsRef.current || !linesRef.current) return;
 
-    const time = state.clock.getElapsedTime(); // Obtiene el tiempo transcurrido
-    let lineIndex = 0; // Inicializa el índice de las líneas
+    const time = state.clock.getElapsedTime();
+    const delta = state.clock.getDelta();
+    const positionsArray = lineGeometry.attributes.position.array as Float32Array;
+    const colorsArray = lineGeometry.attributes.color.array as Float32Array;
+    let lineIndex = 0;
 
-    // Itera sobre cada par de nodos
+    nodeStates.forEach((node, i) => {
+      if (Math.random() < 0.02) {
+        node.targetActive = Math.random() > 0.5;
+      }
+      node.active = THREE.MathUtils.lerp(node.active ? 1 : 0, node.targetActive ? 1 : 0, ANIMATION_SPEED * delta);
+      node.phase += Math.random() * 0.02 - 0.01;
+    });
+
     for (let i = 0; i < NODE_COUNT; i++) {
       for (let j = i + 1; j < NODE_COUNT; j++) {
-        const dx = positions[i * 3] - positions[j * 3]; // Calcula la diferencia en X
-        const dy = positions[i * 3 + 1] - positions[j * 3 + 1]; // Calcula la diferencia en Y
-        const dz = positions[i * 3 + 2] - positions[j * 3 + 2]; // Calcula la diferencia en Z
-        const distance = Math.sqrt(dx * dx + dy * dy + dz * dz); // Calcula la distancia entre nodos
+        const dx = positions[i * 3] - positions[j * 3];
+        const dy = positions[i * 3 + 1] - positions[j * 3 + 1];
+        const dz = positions[i * 3 + 2] - positions[j * 3 + 2];
+        const distanceSq = dx * dx + dy * dy + dz * dz;
 
-        // Verifica si la distancia es menor que la máxima permitida
-        if (distance < MAX_DISTANCE) {
-          const shouldConnect = Math.sin(time * 0.5 + i * j) > 1 - ACTIVE_CONNECTIONS_PERCENT; // Determina si se debe conectar
+        if (distanceSq < MAX_DISTANCE * MAX_DISTANCE) {
+          const connectionStrength =
+            nodeStates[i].active * nodeStates[j].active *
+            (1 - Math.sqrt(distanceSq) / MAX_DISTANCE) *
+            (0.5 + Math.sin(time + nodeStates[i].phase + nodeStates[j].phase) * 0.5);
 
-          if (shouldConnect) {
-            // Asigna las posiciones de la línea
-            linePositions[lineIndex * 6] = positions[i * 3];
-            linePositions[lineIndex * 6 + 1] = positions[i * 3 + 1];
-            linePositions[lineIndex * 6 + 2] = positions[i * 3 + 2];
-            linePositions[lineIndex * 6 + 3] = positions[j * 3];
-            linePositions[lineIndex * 6 + 4] = positions[j * 3 + 1];
-            linePositions[lineIndex * 6 + 5] = positions[j * 3 + 2];
+          if (connectionStrength > (1 - CONNECTION_PROBABILITY)) {
+            const alpha = Math.min(1, connectionStrength * 2);
 
-            const alpha = 1 - distance / MAX_DISTANCE; // Calcula la opacidad basada en la distancia
-            // Asigna los colores de la línea
-            lineColors[lineIndex * 6] = colors[i * 3] * alpha;
-            lineColors[lineIndex * 6 + 1] = colors[i * 3 + 1] * alpha;
-            lineColors[lineIndex * 6 + 2] = colors[i * 3 + 2] * alpha;
-            lineColors[lineIndex * 6 + 3] = colors[j * 3] * alpha;
-            lineColors[lineIndex * 6 + 4] = colors[j * 3 + 1] * alpha;
-            lineColors[lineIndex * 6 + 5] = colors[j * 3 + 2] * alpha;
+            positionsArray.set([
+              positions[i * 3], positions[i * 3 + 1], positions[i * 3 + 2],
+              positions[j * 3], positions[j * 3 + 1], positions[j * 3 + 2]
+            ], lineIndex * 6);
 
-            lineIndex++; // Incrementa el índice de la línea
+            const pulse = 0.5 + Math.sin(time * 3 + i + j) * 0.5;
+            colorsArray.set([
+              colors[i * 3] * alpha * pulse, colors[i * 3 + 1] * alpha * pulse, colors[i * 3 + 2] * alpha * pulse,
+              colors[j * 3] * alpha * pulse, colors[j * 3 + 1] * alpha * pulse, colors[j * 3 + 2] * alpha * pulse
+            ], lineIndex * 6);
+
+            lineIndex++;
           }
         }
       }
     }
 
-    // Actualiza la geometría de las líneas con las nuevas posiciones y colores
-    linesRef.current.geometry.setAttribute('position', new THREE.BufferAttribute(linePositions.slice(0, lineIndex * 6), 3));
-    linesRef.current.geometry.setAttribute('color', new THREE.BufferAttribute(lineColors.slice(0, lineIndex * 6), 3));
-    linesRef.current.geometry.setDrawRange(0, lineIndex * 2); // Establece el rango de dibujo
+    lineGeometry.attributes.position.needsUpdate = true;
+    lineGeometry.attributes.color.needsUpdate = true;
+    lineGeometry.setDrawRange(0, lineIndex * 2);
   });
 
   return (
@@ -95,29 +119,26 @@ function Nodes() {
           <bufferAttribute attach="attributes-position" count={NODE_COUNT} array={positions} itemSize={3} />
           <bufferAttribute attach="attributes-color" count={NODE_COUNT} array={colors} itemSize={3} />
         </bufferGeometry>
-        <pointsMaterial size={0.5} toneMapped />
+        <pointsMaterial size={0.8} vertexColors blending={THREE.AdditiveBlending} />
       </points>
 
-      <lineSegments ref={linesRef}>
-        <bufferGeometry>
-          <bufferAttribute attach="attributes-position" count={0} array={linePositions} itemSize={3} />
-          <bufferAttribute attach="attributes-color" count={0} array={lineColors} itemSize={3} />
-        </bufferGeometry>
-        <lineBasicMaterial toneMapped />
+      <lineSegments ref={linesRef} geometry={lineGeometry}>
+        <lineBasicMaterial vertexColors blending={THREE.AdditiveBlending} />
       </lineSegments>
     </>
   );
 }
 
-const BackgroundNodes = () => {
-  return (
-    <Canvas
-      className="hidden sm:block w-full h-full -z-10 nodeBg"
-      style={{ position: 'absolute', top: 0, left: 0 }}
-    >
-      <Nodes />
-    </Canvas>
-  );
-};
+const BackgroundNodes = () => (
+  <Canvas
+    className="hidden sm:block w-full h-full -z-10 nodeBg"
+    style={{ position: 'absolute', top: 0, left: 0, background: '#000' }} // Fondo negro
+    frameloop="always"
+    gl={{ antialias: true, alpha: true }}
+    camera={{ position: [0, 0, 300], fov: 75 }}
+  >
+    <Nodes />
+  </Canvas>
+);
 
 export default BackgroundNodes;

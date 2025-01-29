@@ -3,7 +3,9 @@ import ContactForm from "../components/form/form"
 
 export const Contact = () => {
     return <>    
-      <ContactForm/>  
-      <Footer/>
+      <div className="mt-16">
+        <ContactForm/>  
+        <Footer/>
+      </div>
     </>
 }
