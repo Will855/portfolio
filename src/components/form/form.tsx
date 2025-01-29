@@ -71,7 +71,8 @@ const ContactForm = () => {
       formDataToSend.append('message', formData.message);
 
       // Enviar los datos al servidor usando Axios
-      const response = await axios.post('http://localhost/api/sendForm.php', formDataToSend, {
+      const response = await axios.post(
+  `${process.env.REACT_APP_API_URL}/api/sendForm.php, formDataToSend, {
         headers: {
           'Content-Type': 'multipart/form-data', // Asegurarse de que se envíe como formulario
         },
