@@ -41,7 +41,7 @@ export const projects: Project[] = [
     },
     {
         id: "5",
-        content: NotFound,y
+        content: NotFound,
         bgProyect: "/images/bg-proyecto2.jpg",
         codeUrl: "https://github.com/tu-usuario/proyecto-2",
         demoUrl: "/404"
