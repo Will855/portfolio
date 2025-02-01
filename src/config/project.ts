@@ -1,4 +1,5 @@
 import HeadPhones from "../components/demos/headphones";
+import NotFound from "../pages/404";
 
 export interface Project {
     id: string;
@@ -19,28 +20,28 @@ export const projects: Project[] = [
     },
     {
         id: "2",
-        content: "<h1>Proyecto 2</h1>...",
+        content: NotFound,
         bgProyect: "/images/bg-proyecto2.jpg",
         codeUrl: "https://github.com/tu-usuario/proyecto-2",
         demoUrl: "/404"
     },
     {
         id: "3",
-        content: "<h1>Proyecto 3</h1>...",
+        content: NotFound,
         bgProyect: "/images/bg-proyecto2.jpg",
         codeUrl: "https://github.com/tu-usuario/proyecto-2",
         demoUrl: "/404"
     },
     {
         id: "4",
-        content: "<h1>Proyecto 4</h1>...",
+        content: NotFound,
         bgProyect: "/images/bg-proyecto2.jpg",
         codeUrl: "https://github.com/tu-usuario/proyecto-2",
         demoUrl: "/404"
     },
     {
         id: "5",
-        content: "<h1>Proyecto 5</h1>...",
+        content: NotFound,
         bgProyect: "/images/bg-proyecto2.jpg",
         codeUrl: "https://github.com/tu-usuario/proyecto-2",
         demoUrl: "/404"
