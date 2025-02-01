@@ -17,7 +17,7 @@ export default defineConfig({
     }
   },
   build: {
-    outDir: '../react-build', // Directorio de build
+    outDir: 'dist', // Directorio de build
     emptyOutDir: true // Limpiar directorio en cada build
   }
 });
