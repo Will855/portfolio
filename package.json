@@ -17,6 +17,7 @@
     "@tsparticles/engine": "^3.5.0",
     "@types/three": "^0.171.0",
     "axios": "^1.7.9",
+    "firebase": "^11.2.0",
     "framer-motion": "^11.9.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
