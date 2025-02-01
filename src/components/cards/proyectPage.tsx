@@ -45,7 +45,7 @@ const CardDetails: React.FC = () => {
                 </div>
             </header>
 
-            <div className="p-8 bg-slate-300 mx-6">
+            <div className="bg-slate-300 md:mx-6">
                 <div className="h-auto max-w-6xl mx-auto">
                     
                     <ContentComponent />
