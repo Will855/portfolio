@@ -1,13 +1,16 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
-import { gsap } from 'gsap';
+import React, { useRef, useState } from 'react';
 import IonIcon from '@reacticons/ionicons';
-import axios from 'axios';
+import Input from './inpput'
+import useGsapAnimation from './../hook/useGsapAnimation';
+import { isValidEmail } from './utils/validation';
+import { sendContactForm } from './../services/contactService';
 
 const ContactForm = () => {
   const formRef = useRef(null);
-  const timelineRef = useRef<gsap.core.Timeline | null>(null);
+  useGsapAnimation(formRef);
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -16,24 +19,6 @@ const ContactForm = () => {
   });
   const [responseMessage, setResponseMessage] = useState('');
   const [error, setError] = useState('');
-
-  useEffect(() => {
-    timelineRef.current = gsap.timeline({ repeat: -1, yoyo: true });
-
-    timelineRef.current
-      .to(formRef.current, {
-        boxShadow: '0 0 20px rgba(240, 248, 255, 0.5)',
-        duration: 2,
-        repeat: -1,
-        yoyo: true,
-      }, 0);
-
-    return () => {
-      if (timelineRef.current) {
-        timelineRef.current.kill();
-      }
-    };
-  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -47,7 +32,6 @@ const ContactForm = () => {
     e.preventDefault();
 
     try {
-      // Validar los datos del formulario
       if (!formData.name.trim() || !formData.email.trim() || !formData.message.trim()) {
         setError('Por favor, completa todos los campos del formulario.');
         return;
@@ -63,23 +47,10 @@ const ContactForm = () => {
         return;
       }
 
-      // Crear un objeto FormData
-      const formDataToSend = new FormData();
-      formDataToSend.append('name', formData.name);
-      formDataToSend.append('email', formData.email);
-      formDataToSend.append('phone', formData.phone);
-      formDataToSend.append('message', formData.message);
+      const data = await sendContactForm(formData);
 
-      // Enviar los datos al servidor usando Axios
-      const response = await axios.post(
-  `${process.env.REACT_APP_API_URL}/api/sendForm.php, formDataToSend, {
-        headers: {
-          'Content-Type': 'multipart/form-data', // Asegurarse de que se envíe como formulario
-        },
-      });
-
-      if (response.data.status === 'success') {
-        setResponseMessage(response.data.message);
+      if (data.status === 'success') {
+        setResponseMessage(data.message);
         setError('');
         setFormData({
           name: '',
@@ -89,19 +60,13 @@ const ContactForm = () => {
         });
       } else {
         setResponseMessage('');
-        setError(response.data.message || 'Error al enviar el mensaje. Por favor, inténtalo de nuevo más tarde.');
+        setError(data.message || 'Error al enviar el mensaje. Por favor, inténtalo de nuevo más tarde.');
       }
     } catch (error) {
       console.error('Error al enviar los datos:', error);
       setResponseMessage('');
       setError('Error al enviar el mensaje. Por favor, inténtalo de nuevo más tarde.');
     }
-  };
-
-  const isValidEmail = (email) => {
-    // Expresión regular básica para validar el formato del correo electrónico
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
   };
 
   return (
@@ -111,7 +76,7 @@ const ContactForm = () => {
         onSubmit={handleSubmit}
         className="w-full max-w-lg bg-white/5 p-8 rounded-lg shadow-xl relative z-10 backdrop-filter backdrop-blur-sm bg-opacity-80"
       >
-        <h2 className="text-4xl md:text-5xl font-bold mb-8 text-center bg-gradient-to-r from-blue-400 to-purple-300 bg-clip-text text-transparent">
+        <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-8 text-center bg-gradient-to-r from-blue-400 to-purple-300 bg-clip-text text-transparent min-w-12">
           Contáctame
         </h2>
         <div className="space-y-4">
@@ -147,19 +112,5 @@ const ContactForm = () => {
     </div>
   );
 };
-
-const Input = ({ label, name, type, placeholder, onChange }) => (
-  <div className="relative">
-    <label htmlFor={name} className="text-[#f0f8ff] block mb-2">{label}</label>
-    <input
-      type={type}
-      id={name}
-      name={name}
-      onChange={onChange}
-      className="w-full px-3 py-2 text-[#f0f8ff] bg-[#3a3a3a] rounded-md focus:outline-none focus:ring-2 focus:ring-[#f0f8ff] transition-all duration-300 ease-in-out"
-      placeholder={placeholder}
-    />
-  </div>
-);
 
 export default ContactForm;

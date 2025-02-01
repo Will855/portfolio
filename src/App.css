@@ -61,6 +61,13 @@
   right: 0; /* Mueve el fondo para cubrir todo el botón */
 }
 
+.word-cloud-icon {
+  transition: filter 0.3s ease;
+}
+
+.word-cloud-icon:hover {
+  filter: drop-shadow(0 4px 8px rgba(255,255,255,0.15));
+}
 
 /* Estilos para el texto dentro del botón magnético */
 .text {

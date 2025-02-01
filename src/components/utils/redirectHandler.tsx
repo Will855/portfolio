@@ -1,5 +1,5 @@
 // redirectHandler.ts
-import { fetchData } from "../server/api"; // Asegúrate de que la ruta sea correcta
+import { fetchData } from "../../server/api"; // Asegúrate de que la ruta sea correcta
 
 export const handleRedirect = async (id: string) => {
     try {

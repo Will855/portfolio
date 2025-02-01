@@ -10,15 +10,15 @@ const WordCloud = () => {
     { name: 'logo-sql', icon: <IonIcon name="server" className='hover:text-green-600'/> },
     { name: 'logo-laravel', icon: <IonIcon name="logo-laravel" className='hover:text-orange-600'/> },
     { name: 'logo-sass', icon: <IonIcon name="logo-sass" className='hover:text-purple-700'/> },
-    // { name: 'logo-bootstrap', icon: <IonIcon name="logo-bootstrap" /> },
-    // { name: 'php', icon: <IonIcon name="logo-sqlite" /> },
     { name: 'logo-python', icon: <IonIcon name="logo-python" className='hover:text-blue-700'/> },
     { name: 'logo-css3', icon: <IonIcon name="logo-css3" className='hover:text-blue-800'/> },
     { name: 'logo-html5', icon: <IonIcon name="logo-html5" className='hover:text-orange-500'/> }
   ]; // Lista de iconos
 
+
   // Función para generar un tamaño aleatorio entre 10 y 24
   const getRandomSize = () => Math.floor(Math.random() * (20 - 5 + 5)) + 20;
+
 
   // Función que se activa al mover el mouse
   const handleMouseMove = (e: React.MouseEvent) => {
@@ -42,6 +42,7 @@ const WordCloud = () => {
     });
   };
 
+
   // Función que se activa al entrar el mouse en un icono
   const handleMouseEnter = (index: number) => {
     if (wordsRef.current[index]) {
@@ -53,6 +54,7 @@ const WordCloud = () => {
     }
   };
 
+
   // Función que se activa al salir el mouse de un icono
   const handleMouseLeave = (index: number) => {
     if (wordsRef.current[index]) {
@@ -63,6 +65,7 @@ const WordCloud = () => {
       });
     }
   };
+
 
   // Usamos useEffect para limpiar el código y evitar fugas de memoria
   useEffect(() => {
@@ -80,6 +83,7 @@ const WordCloud = () => {
       });
     };
 
+
     window.addEventListener('mouseleave', handleMouseLeaveWindow); // Agregamos el evento
 
     // Limpiamos el evento al desmontar el componente
@@ -88,11 +92,13 @@ const WordCloud = () => {
     };
   }, []);
 
+  
   return (
     <div
       onMouseMove={handleMouseMove} // Evento para mover el mouse
-      style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', height: '15rem', position: 'relative', alignContent: 'center' }}
+      style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center',height : '150px', position: 'relative', alignContent: 'center' }}
       id='skills'
+      className='my-20'
     >
       {words.map((word, index) => (
         <div

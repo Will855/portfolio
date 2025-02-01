@@ -1,5 +1,5 @@
 import React from 'react';
-import BackgroundNodes from '../backgrounds/bgNodes';
+import BackgroundNodes from '../animations/backgrounds/bgNodes';
 
 const Footer = () => {
   return (
@@ -18,13 +18,13 @@ const Footer = () => {
                 <li>
                   <a href="mailto:tuemail@gmail.com" className="flex items-center gap-2 hover:text-blue-300 transition-colors">
                     <span className="i-ion-mail-open-outline text-xl"></span>
-                    tuemail@gmail.com
+                    lynchwilmer@gmail.com
                   </a>
                 </li>
                 <li>
                   <a href="tel:+1234567890" className="flex items-center gap-2 hover:text-purple-300 transition-colors">
                     <span className="i-ion-call-outline text-xl"></span>
-                    +1 234 567 890
+                    +58 4265940917
                   </a>
                 </li>
               </ul>
@@ -50,13 +50,13 @@ const Footer = () => {
               <ul className="space-y-3">
                 <li>
                   <a
-                    href="https://github.com/tuusuario"
+                    href="https://github.com/Will855"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center gap-2 hover:text-blue-300 transition-colors"
                   >
                     <span className="i-ion-logo-github text-xl"></span>
-                    GitHub/tuusuario
+                    GitHub/Will855
                   </a>
                 </li>
               </ul>
@@ -69,7 +69,7 @@ const Footer = () => {
           {/* Copyright */}
           <div className="text-center opacity-75">
             <p className="text-sm">
-              &copy; {new Date().getFullYear()} Tu Nombre. Todos los derechos reservados.
+              &copy; {new Date().getFullYear()} Wilmer Lynch. Todos los derechos reservados.
             </p>
             <p className="mt-2 text-xs">Desarrollado con React y Tailwind CSS</p>
           </div>
